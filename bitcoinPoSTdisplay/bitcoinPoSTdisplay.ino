@@ -17,6 +17,8 @@ fs::SPIFFSFS &FlashFS = SPIFFS;
 #include "Bitcoin.h"
 //#include "esp_adc_cal.h"
 
+// Dario's verion 0.01
+
 #define PARAM_FILE "/elements.json"
 #define KEY_FILE "/thekey.txt"
 
