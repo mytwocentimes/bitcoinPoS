@@ -17,7 +17,8 @@ fs::SPIFFSFS &FlashFS = SPIFFS;
 #include "Bitcoin.h"
 //#include "esp_adc_cal.h"
 
-// Dario's verion 0.01
+// Dario's bitcoinPoS version 0.02
+// sleep function
 
 #define PARAM_FILE "/elements.json"
 #define KEY_FILE "/thekey.txt"
@@ -68,6 +69,12 @@ bool selected = false;
 bool lnurlCheckPoS = false;
 bool lnurlCheckATM = false;
 String lnurlATMPin;
+bool isPretendSleeping = false;
+
+//////////////SLEEP SETTINGS///////////////////
+bool isSleepEnabled = true;
+int sleepTimer = 180; // Time in seconds before the device goes to sleep
+
 
 // custom access point pages
 static const char PAGE_ELEMENTS[] PROGMEM = R"(
