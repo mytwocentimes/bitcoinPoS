@@ -17,7 +17,7 @@ fs::SPIFFSFS &FlashFS = SPIFFS;
 #include "Bitcoin.h"
 //#include "esp_adc_cal.h"
 
-// Dario's verion 0.01
+// Dario's verion 0.01 test branch
 
 #define PARAM_FILE "/elements.json"
 #define KEY_FILE "/thekey.txt"
@@ -68,6 +68,9 @@ bool selected = false;
 bool lnurlCheckPoS = false;
 bool lnurlCheckATM = false;
 String lnurlATMPin;
+bool isPretendSleeping = false;
+
+// >>>>>>> Stashed changes
 
 // custom access point pages
 static const char PAGE_ELEMENTS[] PROGMEM = R"(
@@ -287,10 +290,15 @@ void setup()
     const JsonObject lncurrencyRoot = doc[4];
     const char *lncurrencyChar = lncurrencyRoot["value"];
     lncurrency = lncurrencyChar;
+//dd
+Serial.println(lncurrencyChar);
 
     const JsonObject lnurlPoSRoot = doc[5];
     const char *lnurlPoSChar = lnurlPoSRoot["value"];
     const String lnurlPoS = lnurlPoSChar;
+    //dd
+Serial.println(lnurlPoSChar);
+
     baseURLPoS = getValue(lnurlPoS, ',', 0);
     secretPoS = getValue(lnurlPoS, ',', 1);
     currencyPoS = getValue(lnurlPoS, ',', 2);
@@ -1293,8 +1301,12 @@ bool getSats()
 {
   WiFiClientSecure client;
   client.setInsecure(); //Some versions of WiFiClientSecure need this
+//dd
+Serial.println("WiFiClientSecure");
 
   lnbitsServer.toLowerCase();
+//dd
+Serial.println(lnbitsServer);
   if (lnbitsServer.substring(0, 8) == "https://")
   {
     lnbitsServer = lnbitsServer.substring(8, lnbitsServer.length());
@@ -1302,6 +1314,10 @@ bool getSats()
   const char *lnbitsServerChar = lnbitsServer.c_str();
   const char *invoiceChar = invoice.c_str();
   const char *lncurrencyChar = lncurrency.c_str();
+//dd
+Serial.println("char " + String(lnbitsServerChar));
+Serial.println("char " + String(invoiceChar));
+Serial.println("char " + String(lncurrencyChar));
 
   Serial.println("connecting to LNbits server " + lnbitsServer);
   if (!client.connect(lnbitsServerChar, 443))
@@ -1312,6 +1328,10 @@ bool getSats()
 
   const String toPost = "{\"amount\" : 1, \"from\" :\"" + String(lncurrencyChar) + "\"}";
   const String url = "/api/v1/conversion";
+//dd
+Serial.println("char " + String(toPost));
+Serial.println("char " + String(url));
+
   client.print(String("POST ") + url + " HTTP/1.1\r\n" +
                "Host: " + String(lnbitsServerChar) + "\r\n" +
                "User-Agent: ESP32\r\n" +
@@ -1321,7 +1341,17 @@ bool getSats()
                "Content-Length: " + toPost.length() + "\r\n" +
                "\r\n" +
                toPost + "\n");
-
+  //dd
+  Serial.println(String("POST ") + url + " HTTP/1.1\r\n" +
+               "Host: " + String(lnbitsServerChar) + "\r\n" +
+               "User-Agent: ESP32\r\n" +
+               "X-Api-Key: " + String(invoiceChar) + " \r\n" +
+               "Content-Type: application/json\r\n" +
+               "Connection: close\r\n" +
+               "Content-Length: " + toPost.length() + "\r\n" +
+               "\r\n" +
+               toPost + "\n");
+ 
   while (client.connected())
   {
     const String line = client.readStringUntil('\n');
